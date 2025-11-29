@@ -1,21 +1,20 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { LessonPlanRequest } from '../types';
 
-// REMOVIDA A INICIALIZAÇÃO GLOBAL QUE CAUSAVA ERRO
-// const ai = new GoogleGenAI({ apiKey: process.env.API_KEY }); 
-
 async function fetchEducationalData() {
   try {
-    // Busca na pasta public (raiz do site publicado)
     const [bnccResponse, saebResponse] = await Promise.all([
         fetch('/bncc_data.json'),
         fetch('/saeb_data.json')
     ]);
+
     const bnccData = bnccResponse.ok ? await bnccResponse.json() : [];
     const saebData = saebResponse.ok ? await saebResponse.json() : {};
+
     return { bnccData, saebData };
   } catch (error) {
-    console.error("Erro dados:", error);
+    console.error("Erro ao buscar dados educativos:", error);
     return { bnccData: [], saebData: {} };
   }
 }
@@ -127,13 +126,13 @@ const lessonPlanSchema = {
 
 export async function* generateLessonPlanStream(request: LessonPlanRequest): AsyncGenerator<string> {
   
-  // VERIFICAÇÃO DE SEGURANÇA E INICIALIZAÇÃO PREGUIÇOSA (LAZY)
+  // INICIALIZAÇÃO LAZY (DENTRO DA FUNÇÃO) PARA EVITAR ERRO NO LOAD
   const apiKey = process.env.API_KEY;
+  
   if (!apiKey) {
-    throw new Error("A chave de API não foi configurada. Verifique as variáveis de ambiente no Netlify.");
+    throw new Error("API key not found. Please check your environment variables in Netlify.");
   }
 
-  // Inicializa a IA apenas quando a função é chamada
   const ai = new GoogleGenAI({ apiKey: apiKey });
 
   // Busca os dados dinamicamente de ambos os arquivos
@@ -210,7 +209,7 @@ export async function* generateLessonPlanStream(request: LessonPlanRequest): Asy
         } else if (error.message.includes("429")) {
             errorMessage = "Limite de requisições atingido. Por favor, aguarde um momento antes de tentar novamente.";
         } else if (error.message.includes("API key")) {
-            errorMessage = "Erro de Configuração: Chave de API inválida ou não encontrada.";
+             errorMessage = "Erro de configuração: Chave de API inválida ou não encontrada no servidor.";
         }
     }
     throw new Error(errorMessage);
