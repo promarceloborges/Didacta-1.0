@@ -1,8 +1,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { LessonPlanRequest } from '../types';
 
-// A chave será injetada pelo Vite/Netlify
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// REMOVIDA A INICIALIZAÇÃO GLOBAL QUE CAUSAVA ERRO
+// const ai = new GoogleGenAI({ apiKey: process.env.API_KEY }); 
 
 async function fetchEducationalData() {
   try {
@@ -125,8 +125,17 @@ const lessonPlanSchema = {
   required: ['meta', 'plano_aula']
 };
 
-// O segredo é este 'export' aqui embaixo:
 export async function* generateLessonPlanStream(request: LessonPlanRequest): AsyncGenerator<string> {
+  
+  // VERIFICAÇÃO DE SEGURANÇA E INICIALIZAÇÃO PREGUIÇOSA (LAZY)
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("A chave de API não foi configurada. Verifique as variáveis de ambiente no Netlify.");
+  }
+
+  // Inicializa a IA apenas quando a função é chamada
+  const ai = new GoogleGenAI({ apiKey: apiKey });
+
   // Busca os dados dinamicamente de ambos os arquivos
   const { bnccData, saebData } = await fetchEducationalData();
 
@@ -200,6 +209,8 @@ export async function* generateLessonPlanStream(request: LessonPlanRequest): Asy
             errorMessage = "A solicitação foi bloqueada por questões de segurança. Tente reformular o conteúdo.";
         } else if (error.message.includes("429")) {
             errorMessage = "Limite de requisições atingido. Por favor, aguarde um momento antes de tentar novamente.";
+        } else if (error.message.includes("API key")) {
+            errorMessage = "Erro de Configuração: Chave de API inválida ou não encontrada.";
         }
     }
     throw new Error(errorMessage);
