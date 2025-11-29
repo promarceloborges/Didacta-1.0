@@ -1,0 +1,142 @@
+{
+  "saeb": {
+    "lingua_portuguesa": {
+      "2_ano": {
+        "observacao": "Matriz do 2º ano contém habilidades agrupadas por eixos; este é um extrato representativo.",
+        "descritores": [
+          {
+            "codigo": "D1",
+            "descricao": "Localizar informações explícitas em enunciados curtos."
+          },
+          {
+            "codigo": "D2",
+            "descricao": "Identificar a sequência de acontecimentos em pequenas narrativas."
+          },
+          {
+            "codigo": "D3",
+            "descricao": "Inferir o sentido de palavras a partir do contexto."
+          }
+        ]
+      },
+      "5_ano": {
+        "descritores": [
+          {
+            "codigo": "D1",
+            "descricao": "Localizar informações explícitas em um texto."
+          },
+          {
+            "codigo": "D3",
+            "descricao": "Inferir o sentido de uma palavra ou expressão."
+          },
+          {
+            "codigo": "D4",
+            "descricao": "Inferir uma informação implícita em um texto."
+          },
+          {
+            "codigo": "D6",
+            "descricao": "Identificar o tema de um texto."
+          },
+          {
+            "codigo": "D11",
+            "descricao": "Distinguir fato de opinião relativa a esse fato."
+          }
+        ]
+      },
+      "9_ano": {
+        "descritores": [
+          {
+            "codigo": "D11",
+            "descricao": "Procedimentos de leitura: localizar e relacionar informações."
+          },
+          {
+            "codigo": "D15",
+            "descricao": "Relação entre textos: comparar e relacionar diferentes textos."
+          },
+          {
+            "codigo": "D16",
+            "descricao": "Relações entre recursos expressivos e efeitos de sentido."
+          }
+        ]
+      },
+      "3o_ano_em": {
+        "descritores": [
+          {
+            "codigo": "D1",
+            "descricao": "Localizar informações explícitas em um texto."
+          },
+          {
+            "codigo": "D3",
+            "descricao": "Inferir o sentido de uma palavra ou expressão."
+          },
+          {
+            "codigo": "D6",
+            "descricao": "Identificar o tema de um texto."
+          },
+          {
+            "codigo": "D14",
+            "descricao": "Distinguir fato de opinião relativa a esse fato."
+          }
+        ]
+      }
+    },
+    "matematica": {
+      "2_ano": {
+        "observacao": "Extrato representativo das habilidades da matriz do 2º ano.",
+        "descritores": [
+          {
+            "codigo": "N2.1",
+            "descricao": "Reconhecer números e quantidades em situações cotidianas."
+          },
+          {
+            "codigo": "OP2.1",
+            "descricao": "Realizar adições e subtrações com números naturais em contextos simples."
+          }
+        ]
+      },
+      "5_ano": {
+        "descritores": [
+          {
+            "codigo": "D14",
+            "descricao": "Resolver problemas envolvendo adição ou subtração de números naturais."
+          },
+          {
+            "codigo": "D11",
+            "descricao": "Calcular perímetro de figuras planas desenhadas em malhas quadriculadas."
+          },
+          {
+            "codigo": "D12",
+            "descricao": "Estimar área de figuras planas desenhadas em malhas quadriculadas."
+          }
+        ]
+      },
+      "9_ano": {
+        "descritores": [
+          {
+            "codigo": "D31",
+            "descricao": "Resolver problemas envolvendo proporções e porcentagens."
+          },
+          {
+            "codigo": "D33",
+            "descricao": "Resolver problemas envolvendo cálculo de áreas e volumes simples."
+          }
+        ]
+      },
+      "3o_ano_em": {
+        "descritores": [
+          {
+            "codigo": "D41",
+            "descricao": "Interpretar e resolver problemas algébricos básicos."
+          },
+          {
+            "codigo": "D45",
+            "descricao": "Analisar funções e suas representações em gráficos."
+          }
+        ]
+      }
+    }
+  },
+  "metadados": {
+    "fonte": "INEP - Matrizes de Referência SAEB.",
+    "observacao": "Este arquivo contém um extrato representativo dos descritores oficiais."
+  }
+}
