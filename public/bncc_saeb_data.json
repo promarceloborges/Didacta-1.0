@@ -1,0 +1,44 @@
+[
+  {
+    "etapa": "Educação Infantil",
+    "codigo": "EI02TS01",
+    "texto_full": "refere-se ao primeiro objetivo de apren - dizagem e desenvolvimento proposto no campo de experiências “Traços, sons, cores e formas” para as crianças bem pequenas (de 1 ano e 7 meses a 3 anos e 11 meses). Cumpre destacar que a numeração sequencial dos códigos alfanuméricos não sugere ordem ou hierarquia entre os objetivos de aprendizagem e desenvolvimento.",
+    "texto_preview": "refere-se ao primeiro objetivo de apren - dizagem e desenvolvimento proposto no campo de experiências “Traços, sons, cores e formas” para as crianças bem pequenas (de 1 ano e 7 meses a 3 anos e 11 meses)..."
+  },
+  {
+    "etapa": "Educação Infantil",
+    "codigo": "EI01TS01",
+    "texto_full": ") Explorar sons produzidos com o próprio corpo e com objetos do ambiente.(",
+    "texto_preview": ") Explorar sons produzidos com o próprio corpo e com objetos do ambiente.("
+  },
+  {
+    "etapa": "Educação Infantil",
+    "codigo": "EI02TS01",
+    "texto_full": ") Criar sons com materiais, objetos e instrumentos musicais, para acompanhar diversos ritmos de música.(",
+    "texto_preview": ") Criar sons com materiais, objetos e instrumentos musicais, para acompanhar diversos ritmos de música.("
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF01CI02",
+    "texto_full": ") Localizar, nomear e representar graficamente (por meio de desenhos) partes do corpo humano e explicar suas funções. (",
+    "texto_preview": ") Localizar, nomear e representar graficamente (por meio de desenhos) partes do corpo humano e explicar suas funções. ("
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF01CI03",
+    "texto_full": ") Discutir as razões pelas quais os hábitos de higiene do corpo (lavar as mãos antes de comer, escovar os dentes, limpar os olhos, o nariz e as orelhas etc.) são necessários para a manutenção da saúde. (",
+    "texto_preview": ") Discutir as razões pelas quais os hábitos de higiene do corpo (lavar as mãos antes de comer, escovar os dentes, limpar os olhos, o nariz e as orelhas etc.) são necessários para a manutenção da saúde. ("
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF67EF01",
+    "texto_full": "Experimentar e fruir, na escola e fora dela, jogos eletrônicos diversos, valorizando e respeitando os sentidos e significados atribuídos a eles por diferentes grupos sociais e etários.",
+    "texto_preview": "Experimentar e fruir, na escola e fora dela, jogos eletrônicos diversos..."
+  },
+  {
+    "etapa": "Ensino Médio",
+    "codigo": "EM13CNT202",
+    "texto_full": "Analisar as diversas formas de manifestação da vida em seus diferentes níveis de organização, bem como as condições ambientais favoráveis e os fatores limitantes a elas, com ou sem o uso de dispositivos e aplicativos digitais (como softwares de simulação e de realidade virtual, entre outros).",
+    "texto_preview": "Analisar as diversas formas de manifestação da vida em seus diferentes níveis de organização..."
+  }
+]
