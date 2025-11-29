@@ -1,0 +1,5 @@
+{
+  "name": "Didacta - Planejamento didático inteligente, simples e completo.",
+  "description": "An application that automatically generates complete lesson plans using AI. Users can specify the subject, grade, content, and duration to receive a detailed, pedagogically sound lesson plan in JSON format, aligned with educational standards.",
+  "requestFramePermissions": []
+}
