@@ -1,0 +1,87 @@
+[
+  {
+    "etapa": "Educação Infantil",
+    "codigo": "EI02TS01",
+    "texto_full": "Criar sons com materiais, objetos e instrumentos musicais, para acompanhar diversos ritmos de música."
+  },
+  {
+    "etapa": "Educação Infantil",
+    "codigo": "EI03TS01",
+    "texto_full": "Utilizar sons produzidos por materiais, objetos e instrumentos musicais durante brincadeiras de faz de conta, encenações, criações musicais, festas."
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF01CI02",
+    "texto_full": "Localizar, nomear e representar graficamente (por meio de desenhos) partes do corpo humano e explicar suas funções."
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF01CI03",
+    "texto_full": "Discutir as razões pelas quais os hábitos de higiene do corpo (lavar as mãos antes de comer, escovar os dentes, limpar os olhos, o nariz e as orelhas etc.) são necessários para a manutenção da saúde."
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF02LP01",
+    "texto_full": "Utilizar, ao produzir o texto, grafia correta de palavras conhecidas ou com estruturas silábicas já dominadas, letras maiúsculas em início de frases e em substantivos próprios, segmentação entre as palavras, ponto final, ponto de interrogação e ponto de exclamação."
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF02MA06",
+    "texto_full": "Resolver e elaborar problemas de adição e de subtração, envolvendo números de até três ordens, com os significados de juntar, acrescentar, separar, retirar, utilizando estratégias pessoais."
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF03GE01",
+    "texto_full": "Identificar e comparar aspectos culturais dos grupos sociais de seus lugares de vivência, seja na cidade, seja no campo."
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF04HI02",
+    "texto_full": "Identificar mudanças e permanências ao longo do tempo, discutindo os sentidos dos grandes marcos da história da humanidade (nomadismo, desenvolvimento da agricultura e do pastoreio, criação da indústria etc.)."
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF05CI01",
+    "texto_full": "Explorar fenômenos da vida cotidiana que evidenciem propriedades físicas dos materiais – como densidade, condutibilidade térmica e elétrica, respostas a forças magnéticas, solubilidade, respostas a forças mecânicas (dureza, elasticidade etc.), entre outras."
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF06MA01",
+    "texto_full": "Comparar, ordenar, ler e escrever números naturais e números racionais cuja representação decimal é finita, fazendo uso da reta numérica."
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF07HI01",
+    "texto_full": "Explicar o significado de “modernidade” e suas lógicas de inclusão e exclusão, com base em uma concepção europeia."
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF08CI01",
+    "texto_full": "Identificar e classificar diferentes fontes (renováveis e não renováveis) e tipos de energia utilizados em residências, comunidades ou cidades."
+  },
+  {
+    "etapa": "Ensino Fundamental",
+    "codigo": "EF09LP01",
+    "texto_full": "Fazer uso da língua inglesa para expor pontos de vista, argumentos e contra-argumentos, considerando o contexto e os recursos linguísticos voltados para a eficácia da comunicação."
+  },
+  {
+    "etapa": "Ensino Médio",
+    "codigo": "EM13LGG101",
+    "texto_full": "Compreender e analisar processos de produção e circulação de discursos, nas diferentes linguagens, para fazer escolhas fundamentadas em função de interesses pessoais e coletivos."
+  },
+  {
+    "etapa": "Ensino Médio",
+    "codigo": "EM13MAT101",
+    "texto_full": "Interpretar criticamente situações econômicas, sociais e fatos relativos às Ciências da Natureza que envolvam a variação de grandezas, pela análise dos gráficos das funções representadas e das taxas de variação, com ou sem apoio de tecnologias digitais."
+  },
+  {
+    "etapa": "Ensino Médio",
+    "codigo": "EM13CNT101",
+    "texto_full": "Analisar e representar, com ou sem o uso de dispositivos e de aplicativos digitais específicos, as transformações e conservações em sistemas que envolvam quantidade de matéria, de energia e de movimento para realizar previsões sobre seus comportamentos em situações cotidianas e em processos produtivos que priorizem o desenvolvimento sustentável, o uso consciente dos recursos naturais e a preservação da vida em todas as suas formas."
+  },
+  {
+    "etapa": "Ensino Médio",
+    "codigo": "EM13CHS101",
+    "texto_full": "Identificar, analisar e comparar diferentes fontes e narrativas expressas em diversas linguagens, com vistas à compreensão de ideias filosóficas e de processos e eventos históricos, geográficos, políticos, econômicos, sociais, ambientais e culturais."
+  }
+]
