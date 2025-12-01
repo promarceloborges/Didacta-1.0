@@ -1,20 +1,113 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { LessonPlanRequest } from '../types';
 
+export async function* generateLessonPlanStream(request: LessonPlanRequest): AsyncGenerator<string> {
+  
+  // MUDANÇA AQUI: Usando o padrão nativo do Vite
+  const apiKey = import.meta.env.VITE_API_KEY;
+  
+  if (!apiKey) {
+    console.error("Chave de API não encontrada. Verifique se VITE_API_KEY está configurada no Netlify.");
+    throw new Error("Erro de Configuração: Chave de API não encontrada. Configure VITE_API_KEY no Netlify.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey: apiKey });
+
+  // Busca os dados dinamicamente
+  const { bnccData, saebData } = await fetchEducationalData();
+
+  // ... (O RESTO DO CÓDIGO CONTINUA IGUAL AO ANTERIOR)
+  
+  const systemInstruction = `
+    Você é um especialista em pedagogia e design instrucional, fluente em português do Brasil (pt-BR).
+    Sua tarefa é criar planos de aula detalhados e de alta qualidade, alinhados à Base Nacional Comum Curricular (BNCC) e ao SAEB.
+    
+    UTILIZE AS SEGUINTES BASES DE DADOS CARREGADAS PARA REFERÊNCIA:
+
+    --- DADOS BNCC (COMPETÊNCIAS E HABILIDADES) ---
+    ${JSON.stringify(bnccData)}
+    -----------------------------------------------
+
+    --- DADOS SAEB (MATRIZES DE REFERÊNCIA) ---
+    ${JSON.stringify(saebData)}
+    -------------------------------------------
+
+    Instruções de Uso dos Dados:
+    1. Consulte a base 'bnccData' para encontrar o código da habilidade (ex: EF01LP01, EM13LGG101) que melhor se adapta ao tema. O campo 'texto_full' contém a descrição.
+    2. Consulte a base 'saebData' para encontrar descritores. Note que a base SAEB está estruturada por DISCIPLINA e ANO (ex: saeb.lingua_portuguesa.5_ano.descritores).
+       - Navegue na estrutura JSON do SAEB para encontrar o nível escolar e disciplina mais próximos da solicitação do usuário.
+       - Se a disciplina ou ano exato não estiverem no SAEB, use o nível mais próximo (ex: usar descritores do 5º ano para o 4º ano como referência de meta).
+    
+    Diretrizes de Geração do JSON:
+    - Você deve retornar estritamente um objeto JSON válido, sem texto fora do JSON.
+    - Siga rigorosamente o schema JSON fornecido em 'responseSchema'.
+    - Para 'competencia_especifica' e 'habilidades', use dados da BNCC fornecidos. Se não encontrar exato, use seu conhecimento para inferir o código correto da BNCC.
+    - Para 'descritores', extraia do objeto 'saebData'. Exemplo: Se a aula é de Matemática 9º ano, procure em saeb.matematica.9_ano.descritores.
+    - Para 'material_de_apoio', se tipo for 'Vídeo', o link DEVE ser uma URL de busca do YouTube.
+    - O conteúdo deve ser original, prático e adaptado à realidade das escolas brasileiras.
+    - Inclua adaptações claras para alunos com NEE (Necessidades Educacionais Especiais).
+  `;
+
+  const prompt = `
+    Por favor, gere um plano de aula completo com base nos seguintes parâmetros:
+    
+    Parâmetros da Solicitação:
+    - Modalidade de Ensino: ${request.modalidade_ensino}
+    - Componente Curricular/Disciplina: ${request.componente_curricular}
+    - Série/Turma: ${request.serie_turma}
+    - Objeto do Conhecimento/Conteúdo: ${request.objeto_conhecimento}
+    - Duração da Aula (minutos): ${request.duracao_aula_min}
+    - Número de Aulas: ${request.numero_aulas}
+    - Nível de Detalhe: ${request.nivel_detalhe}
+    - Língua: pt-BR
+  `;
+
+  try {
+    const response = await ai.models.generateContentStream({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+        config: {
+            systemInstruction: systemInstruction,
+            responseMimeType: "application/json",
+            responseSchema: lessonPlanSchema,
+            temperature: 0.7,
+        }
+    });
+    
+    for await (const chunk of response) {
+      if(chunk.text) {
+        yield chunk.text;
+      }
+    }
+
+  } catch (error) {
+    console.error("Error generating lesson plan:", error);
+    let errorMessage = "Ocorreu um erro ao gerar o plano de aula.";
+    if (error instanceof Error) {
+        if (error.message.includes("SAFETY")) {
+            errorMessage = "Bloqueio de segurança da IA. Tente outro tema.";
+        } else if (error.message.includes("429")) {
+            errorMessage = "Muitos pedidos. Aguarde um instante.";
+        } else if (error.message.includes("API key")) {
+             errorMessage = "Erro de Chave: VITE_API_KEY não configurada.";
+        }
+    }
+    throw new Error(errorMessage);
+  }
+}
+
+// Mantendo a função auxiliar e o schema (necessários para o código acima funcionar)
 async function fetchEducationalData() {
   try {
     const [bnccResponse, saebResponse] = await Promise.all([
         fetch('/bncc_data.json'),
         fetch('/saeb_data.json')
     ]);
-
     const bnccData = bnccResponse.ok ? await bnccResponse.json() : [];
     const saebData = saebResponse.ok ? await saebResponse.json() : {};
-
     return { bnccData, saebData };
   } catch (error) {
-    console.error("Erro ao buscar dados educativos:", error);
+    console.error("Erro dados:", error);
     return { bnccData: [], saebData: {} };
   }
 }
@@ -122,96 +215,4 @@ const lessonPlanSchema = {
     },
   },
   required: ['meta', 'plano_aula']
-};
-
-export async function* generateLessonPlanStream(request: LessonPlanRequest): AsyncGenerator<string> {
-  
-  // INICIALIZAÇÃO LAZY (DENTRO DA FUNÇÃO) PARA EVITAR ERRO NO LOAD
-  const apiKey = process.env.API_KEY;
-  
-  if (!apiKey) {
-    throw new Error("API key not found. Please check your environment variables in Netlify.");
-  }
-
-  const ai = new GoogleGenAI({ apiKey: apiKey });
-
-  // Busca os dados dinamicamente de ambos os arquivos
-  const { bnccData, saebData } = await fetchEducationalData();
-
-  const systemInstruction = `
-    Você é um especialista em pedagogia e design instrucional, fluente em português do Brasil (pt-BR).
-    Sua tarefa é criar planos de aula detalhados e de alta qualidade, alinhados à Base Nacional Comum Curricular (BNCC) e ao SAEB.
-    
-    UTILIZE AS SEGUINTES BASES DE DADOS CARREGADAS PARA REFERÊNCIA:
-
-    --- DADOS BNCC (COMPETÊNCIAS E HABILIDADES) ---
-    ${JSON.stringify(bnccData)}
-    -----------------------------------------------
-
-    --- DADOS SAEB (MATRIZES DE REFERÊNCIA) ---
-    ${JSON.stringify(saebData)}
-    -------------------------------------------
-
-    Instruções de Uso dos Dados:
-    1. Consulte a base 'bnccData' para encontrar o código da habilidade (ex: EF01LP01, EM13LGG101) que melhor se adapta ao tema. O campo 'texto_full' contém a descrição.
-    2. Consulte a base 'saebData' para encontrar descritores. Note que a base SAEB está estruturada por DISCIPLINA e ANO (ex: saeb.lingua_portuguesa.5_ano.descritores).
-       - Navegue na estrutura JSON do SAEB para encontrar o nível escolar e disciplina mais próximos da solicitação do usuário.
-       - Se a disciplina ou ano exato não estiverem no SAEB, use o nível mais próximo (ex: usar descritores do 5º ano para o 4º ano como referência de meta).
-    
-    Diretrizes de Geração do JSON:
-    - Você deve retornar estritamente um objeto JSON válido, sem texto fora do JSON.
-    - Siga rigorosamente o schema JSON fornecido em 'responseSchema'.
-    - Para 'competencia_especifica' e 'habilidades', use dados da BNCC fornecidos. Se não encontrar exato, use seu conhecimento para inferir o código correto da BNCC.
-    - Para 'descritores', extraia do objeto 'saebData'. Exemplo: Se a aula é de Matemática 9º ano, procure em saeb.matematica.9_ano.descritores.
-    - Para 'material_de_apoio', se tipo for 'Vídeo', o link DEVE ser uma URL de busca do YouTube.
-    - O conteúdo deve ser original, prático e adaptado à realidade das escolas brasileiras.
-    - Inclua adaptações claras para alunos com NEE (Necessidades Educacionais Especiais).
-  `;
-
-  const prompt = `
-    Por favor, gere um plano de aula completo com base nos seguintes parâmetros:
-    
-    Parâmetros da Solicitação:
-    - Modalidade de Ensino: ${request.modalidade_ensino}
-    - Componente Curricular/Disciplina: ${request.componente_curricular}
-    - Série/Turma: ${request.serie_turma}
-    - Objeto do Conhecimento/Conteúdo: ${request.objeto_conhecimento}
-    - Duração da Aula (minutos): ${request.duracao_aula_min}
-    - Número de Aulas: ${request.numero_aulas}
-    - Nível de Detalhe: ${request.nivel_detalhe}
-    - Língua: pt-BR
-  `;
-
-  try {
-    const response = await ai.models.generateContentStream({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: {
-            systemInstruction: systemInstruction,
-            responseMimeType: "application/json",
-            responseSchema: lessonPlanSchema,
-            temperature: 0.7,
-        }
-    });
-    
-    for await (const chunk of response) {
-      if(chunk.text) {
-        yield chunk.text;
-      }
-    }
-
-  } catch (error) {
-    console.error("Error generating lesson plan:", error);
-    let errorMessage = "Ocorreu um erro ao gerar o plano de aula. Por favor, tente novamente.";
-    if (error instanceof Error) {
-        if (error.message.includes("SAFETY")) {
-            errorMessage = "A solicitação foi bloqueada por questões de segurança. Tente reformular o conteúdo.";
-        } else if (error.message.includes("429")) {
-            errorMessage = "Limite de requisições atingido. Por favor, aguarde um momento antes de tentar novamente.";
-        } else if (error.message.includes("API key")) {
-             errorMessage = "Erro de configuração: Chave de API inválida ou não encontrada no servidor.";
-        }
-    }
-    throw new Error(errorMessage);
-  }
 };
