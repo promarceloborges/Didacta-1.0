@@ -1,14 +1,21 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { LessonPlanRequest } from '../types';
 
+// AQUI ESTAVA O ERRO: A linha "const ai = ..." foi removida daqui de cima.
+// Agora a IA só é iniciada dentro da função "generateLessonPlanStream" lá embaixo.
+
 async function fetchEducationalData() {
   try {
+    // Busca os arquivos da pasta public
     const [bnccResponse, saebResponse] = await Promise.all([
         fetch('/bncc_data.json'),
         fetch('/saeb_data.json')
     ]);
+
+    // Converte para JSON se a resposta for OK
     const bnccData = bnccResponse.ok ? await bnccResponse.json() : [];
     const saebData = saebResponse.ok ? await saebResponse.json() : {};
+
     return { bnccData, saebData };
   } catch (error) {
     console.error("Erro ao buscar dados educativos:", error);
@@ -16,6 +23,7 @@ async function fetchEducationalData() {
   }
 }
 
+// Definição da estrutura do plano de aula (Schema)
 const lessonPlanSchema = {
   type: Type.OBJECT,
   properties: {
@@ -121,65 +129,58 @@ const lessonPlanSchema = {
   required: ['meta', 'plano_aula']
 };
 
+// Função principal exportada
 export async function* generateLessonPlanStream(request: LessonPlanRequest): AsyncGenerator<string> {
   
-  // MUDANÇA: Usando import.meta.env para Vercel/Vite
-  const apiKey = import.meta.env.VITE_API_KEY;
+  // 1. Pega a chave das variáveis de ambiente
+  const apiKey = process.env.API_KEY;
   
+  // 2. Verifica se a chave existe antes de tentar usar
   if (!apiKey) {
-    throw new Error("Erro de Configuração: VITE_API_KEY não encontrada nas variáveis de ambiente.");
+    console.error("CHAVE API NÃO ENCONTRADA. Verifique o painel do Netlify.");
+    throw new Error("Erro de Configuração: A chave de API (API_KEY) não foi configurada no servidor.");
   }
 
+  // 3. Inicializa a IA agora (Lazy Loading)
   const ai = new GoogleGenAI({ apiKey: apiKey });
 
-  // Busca os dados dinamicamente de ambos os arquivos
+  // 4. Busca os dados da BNCC
   const { bnccData, saebData } = await fetchEducationalData();
 
+  // 5. Prepara as instruções para a IA
   const systemInstruction = `
     Você é um especialista em pedagogia e design instrucional, fluente em português do Brasil (pt-BR).
     Sua tarefa é criar planos de aula detalhados e de alta qualidade, alinhados à Base Nacional Comum Curricular (BNCC) e ao SAEB.
     
     UTILIZE AS SEGUINTES BASES DE DADOS CARREGADAS PARA REFERÊNCIA:
 
-    --- DADOS BNCC (COMPETÊNCIAS E HABILIDADES) ---
-    ${JSON.stringify(bnccData)}
-    -----------------------------------------------
+    --- DADOS BNCC ---
+    ${JSON.stringify(bnccData).substring(0, 20000)} 
+    (Dados parciais para referência, use seu conhecimento geral da BNCC se necessário)
+    ------------------
 
-    --- DADOS SAEB (MATRIZES DE REFERÊNCIA) ---
+    --- DADOS SAEB ---
     ${JSON.stringify(saebData)}
-    -------------------------------------------
-
-    Instruções de Uso dos Dados:
-    1. Consulte a base 'bnccData' para encontrar o código da habilidade (ex: EF01LP01, EM13LGG101) que melhor se adapta ao tema. O campo 'texto_full' contém a descrição.
-    2. Consulte a base 'saebData' para encontrar descritores. Note que a base SAEB está estruturada por DISCIPLINA e ANO (ex: saeb.lingua_portuguesa.5_ano.descritores).
-       - Navegue na estrutura JSON do SAEB para encontrar o nível escolar e disciplina mais próximos da solicitação do usuário.
-       - Se a disciplina ou ano exato não estiverem no SAEB, use o nível mais próximo (ex: usar descritores do 5º ano para o 4º ano como referência de meta).
+    ------------------
     
     Diretrizes de Geração do JSON:
-    - Você deve retornar estritamente um objeto JSON válido, sem texto fora do JSON.
-    - Siga rigorosamente o schema JSON fornecido em 'responseSchema'.
-    - Para 'competencia_especifica' e 'habilidades', use dados da BNCC fornecidos. Se não encontrar exato, use seu conhecimento para inferir o código correto da BNCC.
-    - Para 'descritores', extraia do objeto 'saebData'. Exemplo: Se a aula é de Matemática 9º ano, procure em saeb.matematica.9_ano.descritores.
-    - Para 'material_de_apoio', se tipo for 'Vídeo', o link DEVE ser uma URL de busca do YouTube.
-    - O conteúdo deve ser original, prático e adaptado à realidade das escolas brasileiras.
-    - Inclua adaptações claras para alunos com NEE (Necessidades Educacionais Especiais).
+    - Você deve retornar estritamente um objeto JSON válido.
+    - Siga rigorosamente o schema JSON fornecido.
+    - O plano deve ser completo e detalhado.
   `;
 
   const prompt = `
-    Por favor, gere um plano de aula completo com base nos seguintes parâmetros:
-    
-    Parâmetros da Solicitação:
-    - Modalidade de Ensino: ${request.modalidade_ensino}
-    - Componente Curricular/Disciplina: ${request.componente_curricular}
-    - Série/Turma: ${request.serie_turma}
-    - Objeto do Conhecimento/Conteúdo: ${request.objeto_conhecimento}
-    - Duração da Aula (minutos): ${request.duracao_aula_min}
-    - Número de Aulas: ${request.numero_aulas}
-    - Nível de Detalhe: ${request.nivel_detalhe}
-    - Língua: pt-BR
+    Gere um plano de aula completo:
+    - Modalidade: ${request.modalidade_ensino}
+    - Disciplina: ${request.componente_curricular}
+    - Turma: ${request.serie_turma}
+    - Tema: ${request.objeto_conhecimento}
+    - Duração: ${request.duracao_aula_min} min (${request.numero_aulas} aulas)
+    - Nível: ${request.nivel_detalhe}
   `;
 
   try {
+    // 6. Chama a IA e transmite a resposta (Stream)
     const response = await ai.models.generateContentStream({
         model: "gemini-2.5-flash",
         contents: prompt,
@@ -198,15 +199,14 @@ export async function* generateLessonPlanStream(request: LessonPlanRequest): Asy
     }
 
   } catch (error) {
-    console.error("Error generating lesson plan:", error);
-    let errorMessage = "Ocorreu um erro ao gerar o plano de aula. Por favor, tente novamente.";
+    console.error("Erro na geração:", error);
+    let errorMessage = "Ocorreu um erro ao gerar o plano de aula.";
+    
     if (error instanceof Error) {
-        if (error.message.includes("SAFETY")) {
-            errorMessage = "A solicitação foi bloqueada por questões de segurança. Tente reformular o conteúdo.";
-        } else if (error.message.includes("429")) {
-            errorMessage = "Limite de requisições atingido. Por favor, aguarde um momento antes de tentar novamente.";
+        if (error.message.includes("429")) {
+            errorMessage = "Muitos pedidos simultâneos. Aguarde um momento.";
         } else if (error.message.includes("API key")) {
-            errorMessage = "Erro de Configuração: Chave de API inválida.";
+             errorMessage = "Chave de API inválida ou expirada.";
         }
     }
     throw new Error(errorMessage);
