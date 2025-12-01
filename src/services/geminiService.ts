@@ -8,7 +8,7 @@ export async function* generateLessonPlanStream(request: LessonPlanRequest): Asy
   
   if (!apiKey) {
     console.error("ERRO CRÍTICO: A chave VITE_API_KEY não foi encontrada.");
-    throw new Error("Erro de Configuração: Chave de API não encontrada na Vercel.");
+    throw new Error("Erro de Configuração: Chave de API não encontrada na Vercel (VITE_API_KEY).");
   }
 
   const ai = new GoogleGenAI({ apiKey: apiKey });
@@ -20,11 +20,12 @@ export async function* generateLessonPlanStream(request: LessonPlanRequest): Asy
     Você é um especialista em pedagogia e design instrucional.
     Crie um plano de aula detalhado e alinhado à BNCC.
     
-    DADOS BNCC: ${JSON.stringify(bnccData).substring(0, 15000)}...
+    DADOS BNCC: ${JSON.stringify(bnccData).substring(0, 25000)}...
     
     Diretrizes:
     - Retorne APENAS JSON válido.
     - Siga o schema.
+    - O plano deve ser completo.
   `;
 
   const prompt = `
@@ -45,6 +46,7 @@ export async function* generateLessonPlanStream(request: LessonPlanRequest): Asy
             responseMimeType: "application/json",
             responseSchema: lessonPlanSchema,
             temperature: 0.7,
+            maxOutputTokens: 8192,
         }
     });
     
@@ -69,7 +71,7 @@ export async function* generateLessonPlanStream(request: LessonPlanRequest): Asy
   }
 }
 
-// Função auxiliar (mantida igual)
+// Função auxiliar
 async function fetchEducationalData() {
   try {
     const [bnccResponse, saebResponse] = await Promise.all([
@@ -85,7 +87,7 @@ async function fetchEducationalData() {
   }
 }
 
-// Schema (Resumido para caber aqui, use o completo que você já tem ou peça de novo se precisar)
+// Schema
 const lessonPlanSchema = {
   type: Type.OBJECT,
   properties: {
