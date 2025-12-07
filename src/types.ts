@@ -64,6 +64,7 @@ export interface LessonPlan {
   metodologia: MetodologiaEtapa[];
   material_de_apoio: MaterialDeApoio[];
   estrategia_de_avaliacao: EstrategiaDeAvaliacao;
+  atividades_recuperacao: string[]; // NOVO CAMPO
   adapitacoes_nee: string[];
   observacoes: string;
   export_formats: string[];
